@@ -1,0 +1,23 @@
+# ============================================
+# FeedBook - Apache URL Rewriting Rules
+# ============================================
+# This file tells Apache to send ALL requests through index.php
+# so that friendly URLs like /feedbook/login work properly.
+#
+# Without this file, only /feedbook/index.php would work.
+# With this file, /feedbook/login, /feedbook/api/posts, etc. all work.
+# ============================================
+
+# Turn on the rewrite engine
+RewriteEngine On
+
+# Set the base path for this app
+RewriteBase /feedbook/
+
+# If the requested file or directory actually exists, serve it directly
+# (e.g., CSS files, JS files, images)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise, send the request to index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
