@@ -72,11 +72,12 @@ try {
     echo "<p class='ok'>✓ Categories seeded</p>";
 
     $pw = password_hash('admin123', PASSWORD_BCRYPT);
-    $conn->exec("INSERT INTO users (name, email, password, role) VALUES ('Admin', 'admin@feedbook.com', '$pw', 'admin')");
+    $conn->exec("INSERT INTO users (name, email, password, role) VALUES ('Admin', 'setup-admin@example.com', '$pw', 'admin')");
     echo "<p class='ok'>✓ Admin user created</p>";
 
     echo "<hr><h3 class='ok'>✓ Setup Complete!</h3>";
-    echo "<p><b>Admin:</b> admin@feedbook.com / admin123</p>";
+    echo "<p><b>Admin Email:</b> setup-admin@example.com</p>";
+    echo "<p><b>Password:</b> admin123 (CHANGE THIS IMMEDIATELY)</p>";
     echo "<p><a href='" . $basePath . "/'>→ Open FeedBook</a></p>";
 } catch (PDOException $e) {
     echo "<p class='err'>Error: " . $e->getMessage() . "</p>";
