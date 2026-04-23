@@ -2,10 +2,23 @@
 // ============================================
 // FeedBook Configuration
 // ============================================
-define('DB_HOST', 'localhost');
-define('DB_USER', getenv('FEEDBOOK_DB_USER') ?: '[REDACTED]');
-define('DB_PASS', getenv('FEEDBOOK_DB_PASS') ?: '[REDACTED]');
-define('DB_NAME', getenv('FEEDBOOK_DB_NAME') ?: 'kawaaiin_feedbook');
+
+// Load from .env first, then config.local.php for overrides
+$envFile = __DIR__ . '/../../.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
+            list($key, $value) = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($value);
+        }
+    }
+}
+
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') ?: '');
+define('DB_NAME', getenv('DB_NAME') ?: 'feedbook');
 $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
