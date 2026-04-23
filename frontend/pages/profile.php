@@ -1,5 +1,6 @@
 <?php
-if (!isset($_SESSION['user_id'])) { header('Location: /feedbook/login'); exit; }
+$basePath = defined('APP_BASE_PATH') ? APP_BASE_PATH : '';
+if (!isset($_SESSION['user_id'])) { header('Location: ' . $basePath . '/login'); exit; }
 $pageTitle = 'Profile — FeedBook';
 $currentPage = 'profile';
 ?>

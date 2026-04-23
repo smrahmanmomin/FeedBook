@@ -3,8 +3,17 @@ session_start();
 require_once __DIR__ . '/backend/config/config.php';
 
 $request_uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$base_path = '/feedbook';
-$route = trim(str_replace($base_path, '', $request_uri), '/');
+$script_dir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
+$base_path = ($script_dir === '/' || $script_dir === '.') ? '' : rtrim($script_dir, '/');
+if (!defined('APP_BASE_PATH')) {
+    define('APP_BASE_PATH', $base_path);
+}
+
+$route_path = $request_uri;
+if ($base_path !== '' && strpos($request_uri, $base_path) === 0) {
+    $route_path = substr($request_uri, strlen($base_path));
+}
+$route = trim($route_path, '/');
 
 // --- PAGE ROUTES ---
 if (empty($route)) {
@@ -13,18 +22,18 @@ if (empty($route)) {
     include __DIR__ . '/frontend/pages/login.php';
 } elseif ($route === 'register') {
     include __DIR__ . '/frontend/pages/register.php';
-} elseif ($route === 'dashboard' && isset($_SESSION['user_id'])) {
+} elseif ($route === 'dashboard') {
     include __DIR__ . '/frontend/pages/dashboard.php';
-} elseif ($route === 'profile' && isset($_SESSION['user_id'])) {
+} elseif ($route === 'profile') {
     include __DIR__ . '/frontend/pages/profile.php';
-} elseif ($route === 'create-post' && isset($_SESSION['user_id'])) {
+} elseif ($route === 'create-post') {
     include __DIR__ . '/frontend/pages/create-post.php';
-} elseif ($route === 'edit-post' && isset($_SESSION['user_id'])) {
+} elseif ($route === 'edit-post') {
     include __DIR__ . '/frontend/pages/edit-post.php';
 } elseif (preg_match('/^post\/(\d+)$/', $route, $m)) {
     $_GET['id'] = $m[1];
     include __DIR__ . '/frontend/pages/single-post.php';
-} elseif ($route === 'admin-users' && isset($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'admin') {
+} elseif ($route === 'admin-users') {
     include __DIR__ . '/frontend/pages/admin-users.php';
 // --- API ROUTES ---
 } elseif (strpos($route, 'api/') === 0) {

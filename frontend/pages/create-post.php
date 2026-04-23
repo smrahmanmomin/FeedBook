@@ -1,5 +1,6 @@
 <?php
-if (!isset($_SESSION['user_id'])) { header('Location: /feedbook/login'); exit; }
+$basePath = defined('APP_BASE_PATH') ? APP_BASE_PATH : '';
+if (!isset($_SESSION['user_id'])) { header('Location: ' . $basePath . '/login'); exit; }
 $pageTitle = 'Create Post — FeedBook';
 $currentPage = 'create-post';
 ?>
@@ -36,7 +37,7 @@ $currentPage = 'create-post';
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary btn-large">Publish Post</button>
-                <a href="/feedbook/dashboard" class="btn btn-secondary">Cancel</a>
+                <a href="<?= $basePath ?>/dashboard" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
     </div>

@@ -3,19 +3,22 @@
 // ============================================
 
 (() => {
+    const BASE_PATH = (window.BASE_PATH || '').replace(/\/+$/, '');
+    const withBase = (path = '') => `${BASE_PATH}${path.startsWith('/') ? path : `/${path}`}`;
+
     const API = {
-        login:       '/feedbook/api/login',
-        register:    '/feedbook/api/register',
-        logout:      '/feedbook/api/logout',
-        me:          '/feedbook/api/me',
-        posts:       '/feedbook/api/posts',
-        createPost:  '/feedbook/api/create_post',
-        updatePost:  '/feedbook/api/update_post',
-        deletePost:  '/feedbook/api/delete_post',
-        categories:  '/feedbook/api/categories',
-        users:       '/feedbook/api/users',
-        search:      '/feedbook/api/search',
-        singlePost:  '/feedbook/api/single_post',
+        login:       withBase('/api/login'),
+        register:    withBase('/api/register'),
+        logout:      withBase('/api/logout'),
+        me:          withBase('/api/me'),
+        posts:       withBase('/api/posts'),
+        createPost:  withBase('/api/create_post'),
+        updatePost:  withBase('/api/update_post'),
+        deletePost:  withBase('/api/delete_post'),
+        categories:  withBase('/api/categories'),
+        users:       withBase('/api/users'),
+        search:      withBase('/api/search'),
+        singlePost:  withBase('/api/single_post'),
     };
 
     // ---- Helpers ----
@@ -59,16 +62,16 @@
 
     // ---- Build Post Card HTML ----
     function postCardHTML(post, showActions = false) {
-        const imgSrc = post.image ? `/feedbook/uploads/${post.image}` : '';
+        const imgSrc = post.image ? withBase(`/uploads/${post.image}`) : '';
         const imgHtml = imgSrc
             ? `<img src="${imgSrc}" alt="${esc(post.title)}" class="post-card-image">`
             : `<div class="post-card-image placeholder">📄</div>`;
         return `
         <div class="post-card">
-            <a href="/feedbook/post/${post.id}">${imgHtml}</a>
+            <a href="${withBase(`/post/${post.id}`)}">${imgHtml}</a>
             <div class="post-card-body">
                 ${post.category_name ? `<span class="post-category-badge">${esc(post.category_name)}</span>` : ''}
-                <h3><a href="/feedbook/post/${post.id}">${esc(post.title)}</a></h3>
+                <h3><a href="${withBase(`/post/${post.id}`)}">${esc(post.title)}</a></h3>
                 <p>${esc(truncate(post.content))}</p>
             </div>
             <div class="post-card-meta">
@@ -77,7 +80,7 @@
             </div>
             ${showActions ? `
             <div class="post-card-actions">
-                <a href="/feedbook/edit-post?id=${post.id}" class="btn btn-small btn-secondary">✏️ Edit</a>
+                <a href="${withBase(`/edit-post?id=${post.id}`)}" class="btn btn-small btn-secondary">✏️ Edit</a>
                 <button class="btn btn-small btn-danger" onclick="deletePost(${post.id})">🗑️ Delete</button>
             </div>` : ''}
         </div>`;
@@ -119,6 +122,12 @@
         // Admin
         const usersT = document.getElementById('users-table');
         if (usersT && document.querySelector('.dashboard-layout')) loadUsers();
+        const categoryForm = document.getElementById('categoryForm');
+        const categoriesTable = document.getElementById('categories-table');
+        if (categoryForm && categoriesTable) {
+            categoryForm.addEventListener('submit', handleCreateCategory);
+            loadAdminCategories();
+        }
 
         // Single Post
         const singlePost = document.getElementById('singlePost');
@@ -130,6 +139,11 @@
         // Close search overlay on click outside
         const overlay = document.getElementById('searchResults');
         if (overlay) overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.add('hidden'); });
+        
+        // Load current user info for comments
+        fetch(API.me).then(r => r.json()).then(d => {
+            if (d.id) { window.currentUserId = d.id; window.isAdmin = d.role === 'admin'; }
+        }).catch(() => {});
     });
 
     // ============================================
@@ -145,7 +159,7 @@
         try {
             const r = await fetch(API.login, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email,password}) });
             const d = await r.json();
-            if (d.success) { showMessage('loginMessage', 'Success! Redirecting...', 'success'); setTimeout(()=>location.href='/feedbook/dashboard',800); }
+            if (d.success) { showMessage('loginMessage', 'Success! Redirecting...', 'success'); setTimeout(()=>location.href=withBase('/dashboard'),800); }
             else { showMessage('loginMessage', d.message||'Login failed', 'danger'); btn.disabled=false; btn.textContent='Sign In'; }
         } catch(err) { showMessage('loginMessage','Network error','danger'); btn.disabled=false; btn.textContent='Sign In'; }
     }
@@ -167,7 +181,7 @@
         try {
             const r = await fetch(API.register, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name,email,password,confirm_password}) });
             const d = await r.json();
-            if (d.success) { showMessage('registerMessage','Account created! Redirecting to login...','success'); setTimeout(()=>location.href='/feedbook/login',1500); }
+            if (d.success) { showMessage('registerMessage','Account created! Redirecting to login...','success'); setTimeout(()=>location.href=withBase('/login'),1500); }
             else { showMessage('registerMessage', d.message||'Registration failed','danger'); btn.disabled=false; btn.textContent='Create Account'; }
         } catch(err) { showMessage('registerMessage','Network error','danger'); btn.disabled=false; btn.textContent='Create Account'; }
     }
@@ -187,7 +201,7 @@
             const posts = d.posts || [];
             if (!posts.length) { c.innerHTML = '<div class="no-posts"><h3>No posts yet</h3><p>Be the first to share a story!</p></div>'; return; }
             c.innerHTML = posts.map(p => postCardHTML(p)).join('');
-        } catch(err) { c.innerHTML = '<div class="no-posts"><h3>Could not load posts</h3><p>Visit <a href="/feedbook/setup.php">setup.php</a> first.</p></div>'; }
+        } catch(err) { c.innerHTML = `<div class="no-posts"><h3>Could not load posts</h3><p>Visit <a href="${withBase('/setup.php')}">setup.php</a> first.</p></div>`; }
     }
 
     // ============================================
@@ -229,7 +243,7 @@
             const md = await mr.json();
             const my = (d.posts||[]).filter(p => p.user_id == md.id);
             if (!my.length) {
-                c.innerHTML = '<div class="no-posts"><h3>No posts yet</h3><p>Start writing today!</p><a href="/feedbook/create-post" class="btn btn-primary" style="margin-top:1rem">Create Your First Post</a></div>';
+                c.innerHTML = `<div class="no-posts"><h3>No posts yet</h3><p>Start writing today!</p><a href="${withBase('/create-post')}" class="btn btn-primary" style="margin-top:1rem">Create Your First Post</a></div>`;
                 return;
             }
             c.innerHTML = my.map(p => postCardHTML(p, true)).join('');
@@ -249,7 +263,7 @@
         try {
             const r = await fetch(API.createPost, { method:'POST', body:formData });
             const d = await r.json();
-            if (d.success) { toast('Post published! 🎉','success'); setTimeout(()=>location.href='/feedbook/dashboard',800); }
+            if (d.success) { toast('Post published! 🎉','success'); setTimeout(()=>location.href=withBase('/dashboard'),800); }
             else showMessage('postMessage', d.message||'Failed','danger');
         } catch(err) { showMessage('postMessage','Network error','danger'); }
     }
@@ -269,7 +283,7 @@
             document.getElementById('content').value = post.content;
             if (post.image) {
                 const preview = document.getElementById('imagePreviewContainer');
-                if (preview) preview.innerHTML = `<img src="/feedbook/uploads/${post.image}" alt="Current image">`;
+                if (preview) preview.innerHTML = `<img src="${withBase(`/uploads/${post.image}`)}" alt="Current image">`;
             }
             setTimeout(() => { const s = document.getElementById('category_id'); if (s && post.category_id) s.value = post.category_id; }, 500);
         } catch(err) { showMessage('editMessage','Failed to load post','danger'); }
@@ -285,7 +299,7 @@
         try {
             const r = await fetch(API.updatePost, { method:'POST', body:formData });
             const d = await r.json();
-            if (d.success) { toast('Post updated! ✅','success'); setTimeout(()=>location.href='/feedbook/dashboard',800); }
+            if (d.success) { toast('Post updated! ✅','success'); setTimeout(()=>location.href=withBase('/dashboard'),800); }
             else showMessage('editMessage', d.message||'Failed','danger');
         } catch(err) { showMessage('editMessage','Network error','danger'); }
     }
@@ -315,7 +329,7 @@
             const mr = await fetch(API.me);
             const md = await mr.json();
             const my = (d.posts||[]).filter(p => p.user_id == md.id);
-            if (!my.length) { c.innerHTML = '<div class="no-posts"><h3>No posts yet</h3><a href="/feedbook/create-post" class="btn btn-primary" style="margin-top:1rem">Write Your First Post</a></div>'; return; }
+            if (!my.length) { c.innerHTML = `<div class="no-posts"><h3>No posts yet</h3><a href="${withBase('/create-post')}" class="btn btn-primary" style="margin-top:1rem">Write Your First Post</a></div>`; return; }
             c.innerHTML = my.map(p => postCardHTML(p, true)).join('');
         } catch(err) { c.innerHTML = '<div class="no-posts"><h3>Could not load posts</h3></div>'; }
     }
@@ -359,7 +373,7 @@
         try {
             const r = await fetch(API.categories);
             const d = await r.json();
-            c.innerHTML = (d.categories||[]).map(cat => `<a class="sidebar-cat-link" href="/feedbook/?cat=${cat.id}">${esc(cat.name)}</a>`).join('');
+            c.innerHTML = (d.categories||[]).map(cat => `<a class="sidebar-cat-link" href="${withBase(`/?cat=${cat.id}`)}">${esc(cat.name)}</a>`).join('');
         } catch(err) { /* silent */ }
     }
 
@@ -381,7 +395,7 @@
             const inner = overlay.querySelector('.search-results-inner') || overlay;
             if (!posts.length) { inner.innerHTML = `<h3>No results for "${esc(q)}"</h3><p style="color:var(--gray-400)">Try a different search term.</p>`; return; }
             inner.innerHTML = `<h3>${posts.length} result${posts.length>1?'s':''} for "${esc(q)}"</h3>`
-                + posts.map(p => `<div class="search-result-item"><h3><a href="/feedbook/post/${p.id}">${esc(p.title)}</a></h3><p>${esc(truncate(p.content,100))} · By ${esc(p.author)} · ${formatDate(p.created_at)}</p></div>`).join('');
+                + posts.map(p => `<div class="search-result-item"><h3><a href="${withBase(`/post/${p.id}`)}">${esc(p.title)}</a></h3><p>${esc(truncate(p.content,100))} · By ${esc(p.author)} · ${formatDate(p.created_at)}</p></div>`).join('');
         } catch(err) { overlay.innerHTML = '<div class="search-results-inner"><h3>Search failed</h3></div>'; }
     };
 
@@ -394,10 +408,11 @@
         const path = location.pathname;
         const match = path.match(/\/post\/(\d+)/);
         if (!match) { c.innerHTML = '<h2>Post not found</h2>'; return; }
+        const postId = match[1];
         try {
-            const r = await fetch(API.singlePost + '?id=' + match[1]);
+            const r = await fetch(API.singlePost + '?id=' + postId);
             const p = await r.json();
-            if (p.error) { c.innerHTML = `<h2>${p.error}</h2><a href="/feedbook/" class="btn btn-primary" style="margin-top:1rem">← Back Home</a>`; return; }
+            if (p.error) { c.innerHTML = `<h2>${p.error}</h2><a href="${withBase('/')}" class="btn btn-primary" style="margin-top:1rem">← Back Home</a>`; return; }
             c.innerHTML = `
                 <div class="single-post-header">
                     ${p.category_name ? `<span class="post-category-badge">${esc(p.category_name)}</span>` : ''}
@@ -408,11 +423,124 @@
                         ${p.updated_at && p.updated_at !== p.created_at ? `<span>· Updated ${formatDate(p.updated_at)}</span>` : ''}
                     </div>
                 </div>
-                ${p.image ? `<img src="/feedbook/uploads/${p.image}" alt="${esc(p.title)}" class="single-post-image">` : ''}
+                ${p.image ? `<img src="${withBase(`/uploads/${p.image}`)}" alt="${esc(p.title)}" class="single-post-image">` : ''}
                 <div class="single-post-content">${esc(p.content).replace(/\n/g,'<br>')}</div>
-                <div class="single-post-back"><a href="/feedbook/" class="btn btn-secondary">← Back to Posts</a></div>`;
+                <div class="single-post-back"><a href="${withBase('/')}" class="btn btn-secondary">← Back to Posts</a></div>`;
+            window.currentPostId = postId;
+            loadComments(postId);
         } catch(err) { c.innerHTML = '<h2>Failed to load post</h2>'; }
     }
+
+    // ============================================
+    // COMMENTS
+    // ============================================
+    async function loadComments(postId) {
+        const section = document.getElementById('commentsSection');
+        if (!section) return;
+        
+        // Check if user is logged in to show comment form
+        try {
+            const mr = await fetch(API.me);
+            const md = await mr.json();
+            if (md.id) {
+                document.getElementById('commentForm').style.display = 'block';
+            }
+        } catch(err) {
+            document.getElementById('commentForm').style.display = 'none';
+        }
+
+        try {
+            const r = await fetch(withBase(`/api/comments?action=get&post_id=${postId}`));
+            if (!r.ok) {
+                document.getElementById('commentsList').innerHTML = '<p>Could not load comments (HTTP ' + r.status + ')</p>';
+                section.style.display = 'block';
+                return;
+            }
+            
+            const d = await r.json();
+            if (!d || d.success === false) { 
+                document.getElementById('commentsList').innerHTML = '<p>' + (d?.message || 'Could not load comments') + '</p>'; 
+                section.style.display = 'block';
+                return; 
+            }
+            
+            const comments = d.comments || [];
+            const commentsList = document.getElementById('commentsList');
+            
+            if (!comments.length) {
+                commentsList.innerHTML = '<p class="no-comments">No comments yet. Be the first to share your thoughts!</p>';
+                section.style.display = 'block';
+                return;
+            }
+
+            commentsList.innerHTML = comments.map(c => `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <strong>${esc(c.author || 'Anonymous')}</strong>
+                        <span class="comment-date">${formatDate(c.created_at)}</span>
+                        ${(window.currentUserId && window.currentUserId == c.user_id) || window.isAdmin ? `
+                            <button class="btn btn-small btn-danger" onclick="deleteComment(${c.id}, ${postId})" title="Delete comment">✕</button>
+                        ` : ''}
+                    </div>
+                    <div class="comment-content">${esc(c.content).replace(/\n/g,'<br>')}</div>
+                </div>
+            `).join('');
+            section.style.display = 'block';
+        } catch(err) { 
+            console.error('Comment loading error:', err);
+            document.getElementById('commentsList').innerHTML = '<p>Error: ' + err.message + '</p>';
+            section.style.display = 'block';
+        }
+    }
+
+    window.handleAddComment = async function(e) {
+        e.preventDefault();
+        const postId = window.currentPostId;
+        const content = document.getElementById('commentContent').value.trim();
+        
+        if (!content) {
+            toast('Comment cannot be empty', 'error');
+            return;
+        }
+
+        try {
+            const r = await fetch(withBase('/api/comments?action=create'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ post_id: postId, content })
+            });
+            const d = await r.json();
+            if (d.success) {
+                document.getElementById('commentContent').value = '';
+                toast('Comment posted! 💬', 'success');
+                loadComments(postId);
+            } else {
+                toast(d.message || 'Failed to post comment', 'error');
+            }
+        } catch(err) {
+            toast('Network error', 'error');
+        }
+    };
+
+    window.deleteComment = async function(commentId, postId) {
+        if (!confirm('Delete this comment?')) return;
+        try {
+            const r = await fetch(withBase('/api/comments?action=delete'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: commentId })
+            });
+            const d = await r.json();
+            if (d.success) {
+                toast('Comment deleted', 'success');
+                loadComments(postId);
+            } else {
+                toast(d.message || 'Failed to delete comment', 'error');
+            }
+        } catch(err) {
+            toast('Network error', 'error');
+        }
+    };
 
     // ============================================
     // ADMIN USERS
@@ -439,6 +567,82 @@
             if (d.success) { toast('User deleted','success'); loadUsers(); }
             else toast('Failed','error');
         } catch(err) { toast('Network error','error'); }
+    };
+
+    // ============================================
+    // ADMIN CATEGORIES
+    // ============================================
+    async function loadAdminCategories() {
+        const c = document.getElementById('categories-table');
+        if (!c) return;
+        try {
+            const r = await fetch(API.categories);
+            const d = await r.json();
+            const categories = d.categories || [];
+            if (!categories.length) {
+                c.innerHTML = '<div class="no-posts"><h3>No categories yet</h3></div>';
+                return;
+            }
+
+            c.innerHTML = `<table class="data-table"><thead><tr><th>ID</th><th>Name</th><th>Created</th><th>Actions</th></tr></thead><tbody>`
+                + categories.map(cat => `<tr><td>${cat.id}</td><td><strong>${esc(cat.name)}</strong></td><td>${formatDate(cat.created_at)}</td><td><button class="btn btn-small btn-danger" onclick='deleteCategory(${cat.id}, ${JSON.stringify(cat.name)})'>Delete</button></td></tr>`).join('')
+                + '</tbody></table>';
+        } catch(err) {
+            c.innerHTML = '<div class="no-posts"><h3>Could not load categories</h3></div>';
+        }
+    }
+
+    async function handleCreateCategory(e) {
+        e.preventDefault();
+        const input = document.getElementById('categoryName');
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) {
+            showMessage('adminMessage', 'Category name is required', 'danger');
+            return;
+        }
+
+        try {
+            const r = await fetch(API.categories, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'create', name })
+            });
+            const d = await r.json();
+            if (d.success) {
+                input.value = '';
+                showMessage('adminMessage', d.message || 'Category created', 'success');
+                loadAdminCategories();
+                loadSidebarCategories();
+                toast('Category added', 'success');
+            } else {
+                showMessage('adminMessage', d.message || 'Failed to create category', 'danger');
+            }
+        } catch(err) {
+            showMessage('adminMessage', 'Network error', 'danger');
+        }
+    }
+
+    window.deleteCategory = async function(id, name) {
+        if (!confirm(`Delete category "${name}"? Posts under this category will become uncategorized.`)) return;
+        try {
+            const r = await fetch(API.categories, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', id })
+            });
+            const d = await r.json();
+            if (d.success) {
+                showMessage('adminMessage', d.message || 'Category deleted', 'success');
+                loadAdminCategories();
+                loadSidebarCategories();
+                toast('Category deleted', 'success');
+            } else {
+                showMessage('adminMessage', d.message || 'Failed to delete category', 'danger');
+            }
+        } catch(err) {
+            showMessage('adminMessage', 'Network error', 'danger');
+        }
     };
 
 })();

@@ -1,0 +1,1602 @@
+\documentclass[12pt,a4paper]{report}
+
+% ============ PACKAGES ============
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{parskip}
+
+% ============ COLORS ============
+\definecolor{codebg}{HTML}{F8F9FA}
+\definecolor{codeframe}{HTML}{DEE2E6}
+\definecolor{keyword}{HTML}{7C3AED}
+\definecolor{string}{HTML}{059669}
+\definecolor{comment}{HTML}{9CA3AF}
+\definecolor{variable}{HTML}{DC2626}
+\definecolor{primary}{HTML}{6366F1}
+\definecolor{darktext}{HTML}{1F2937}
+
+% ============ HYPERLINKS ============
+\hypersetup{
+    colorlinks=true,
+    linkcolor=primary,
+    urlcolor=primary,
+    citecolor=primary
+}
+
+% ============ LISTINGS CONFIG ============
+\lstset{
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codeframe},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{keyword}\bfseries,
+    stringstyle=\color{string},
+    commentstyle=\color{comment}\itshape,
+    identifierstyle=\color{darktext},
+    breaklines=true,
+    breakatwhitespace=false,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    tabsize=4,
+    numbers=left,
+    numberstyle=\tiny\color{comment},
+    numbersep=8pt,
+    xleftmargin=16pt,
+    framexleftmargin=16pt,
+    aboveskip=12pt,
+    belowskip=8pt,
+    literate={->}{{\textcolor{keyword}{->}}}2
+             {=>}{{\textcolor{keyword}{=>}}}2,
+}
+
+\lstdefinelanguage{PHP}{
+    keywords={class, function, public, private, static, if, else, elseif, return, try, catch, new, null, true, false, foreach, echo, require_once, include, isset, empty, exit, define, session_start, header},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]',
+    morestring=[b]",
+}
+
+\lstdefinelanguage{JavaScript}{
+    keywords={const, let, var, function, async, await, if, else, return, try, catch, new, null, true, false, document, window, fetch, forEach, map, filter, join, setTimeout, addEventListener, querySelector, getElementById, className, innerHTML, textContent, classList, createElement, appendChild, remove, location, confirm, alert, preventDefault, encodeURIComponent},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]',
+    morestring=[b]",
+    morestring=[b]`,
+}
+
+% ============ HEADER/FOOTER ============
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize\textcolor{comment}{FeedBook Documentation}}
+\fancyhead[R]{\footnotesize\textcolor{comment}{\leftmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ============ TITLE FORMAT ============
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries\color{primary}}{Chapter \thechapter}{12pt}{\Huge}
+\titleformat{\section}{\normalfont\Large\bfseries\color{darktext}}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\color{darktext}}{\thesubsection}{1em}{}
+
+% ============ DOCUMENT ============
+\begin{document}
+
+% ============ TITLE PAGE ============
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\Huge\bfseries\textcolor{primary}{FeedBook}\par}
+\vspace{0.5cm}
+{\LARGE A Multi-Author Blogging Platform\par}
+\vspace{1.5cm}
+{\Large\textbf{Complete Project Documentation}\par}
+{\large Line-by-Line Code Explanation\par}
+\vspace{2cm}
+{\large\textbf{Development Team}\par}
+\vspace{0.5cm}
+\begin{tabular}{l l}
+\textbf{S M Rahman Momin} & Foundation, Models \& Styling \\
+\textbf{Sheikh Sadi} & Controllers \& API Endpoints \\
+\textbf{Abrar Hasan Chowdhury} & Frontend Pages \& JavaScript \\
+\end{tabular}
+\vspace{1.5cm}
+
+{\large Development Period: March 2 -- April 20, 2026\par}
+\vspace{0.5cm}
+{\normalsize Repository: \url{https://github.com/smrahmanmomin/FeedBook}\par}
+\vfill
+{\normalsize Daffodil International University\par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+% CHAPTER 1: PROJECT OVERVIEW
+% ============================================================
+\chapter{Project Overview}
+
+\section{Introduction}
+FeedBook is a full-stack, multi-author blogging and content publishing platform built using PHP, MySQL, HTML5, CSS3, and Vanilla JavaScript. It allows users to register, log in, create/edit/delete blog posts, upload images, organize content with categories, and search posts. The platform includes role-based access control (Admin, Editor, User) and runs entirely within the XAMPP local development environment.
+
+\section{Technology Stack}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l l l}
+\toprule
+\textbf{Layer} & \textbf{Technology} & \textbf{Purpose} \\
+\midrule
+Frontend & HTML5 & Page structure and semantic markup \\
+Frontend & CSS3 & Styling, responsive layout, animations \\
+Frontend & Vanilla JavaScript & AJAX requests, DOM manipulation \\
+Backend & PHP 8+ & Server-side logic, routing, API \\
+Database & MySQL & Data persistence \\
+Server & Apache (XAMPP) & Web server with mod\_rewrite \\
+Font & Google Fonts (Inter) & Modern typography \\
+\bottomrule
+\end{tabular}
+\caption{Technology stack used in FeedBook}
+\end{table}
+
+\section{Architecture}
+FeedBook follows a \textbf{Model-View-Controller (MVC)} architecture pattern:
+
+\begin{itemize}
+    \item \textbf{Models} (\texttt{backend/models/}): Handle all database queries using PDO prepared statements.
+    \item \textbf{Controllers} (\texttt{backend/controllers/}): Contain business logic, validation, and coordinate between Models and API responses.
+    \item \textbf{Views} (\texttt{frontend/pages/}): PHP templates that render the HTML user interface.
+    \item \textbf{API} (\texttt{backend/api/}): RESTful JSON endpoints consumed by the JavaScript frontend.
+    \item \textbf{Router} (\texttt{index.php}): Central entry point that maps URLs to the appropriate page or API file.
+\end{itemize}
+
+\section{Project Structure}
+\begin{lstlisting}[language={},numbers=none,basicstyle=\ttfamily\small]
+feedbook/
+|-- index.php              # Central router
+|-- setup.php              # Database initialization
+|-- .env                   # Environment variables
+|-- .htaccess              # Apache URL rewriting
+|-- backend/
+|   |-- config/
+|   |   |-- config.php     # App constants
+|   |   |-- database.php   # PDO connection class
+|   |-- middleware/
+|   |   |-- AuthMiddleware.php
+|   |   |-- CsrfMiddleware.php
+|   |-- models/
+|   |   |-- UserModel.php
+|   |   |-- PostModel.php
+|   |   |-- CategoryModel.php
+|   |-- controllers/
+|   |   |-- AuthController.php
+|   |   |-- PostController.php
+|   |   |-- UserController.php
+|   |   |-- CategoryController.php
+|   |-- api/
+|       |-- login.php, register.php, logout.php
+|       |-- posts.php, create_post.php, update_post.php
+|       |-- delete_post.php, search.php, single_post.php
+|       |-- categories.php, users.php, me.php, csrf.php
+|-- frontend/
+|   |-- css/style.css      # Complete stylesheet
+|   |-- js/app.js          # Complete JavaScript
+|   |-- components/
+|   |   |-- header.php, footer.php, sidebar.php
+|   |-- pages/
+|       |-- home.php, login.php, register.php
+|       |-- dashboard.php, profile.php
+|       |-- create-post.php, edit-post.php
+|       |-- admin-users.php, single-post.php
+|-- database/schema.sql
+|-- uploads/               # User-uploaded images
+|-- assets/
+\end{lstlisting}
+
+\section{Database Design}
+
+The application uses four tables with proper relationships:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Table} & \textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\midrule
+users & id & INT PK AUTO & Primary key \\
+      & name & VARCHAR(255) & User's display name \\
+      & email & VARCHAR(255) UNIQUE & Login email \\
+      & password & VARCHAR(255) & Bcrypt hash \\
+      & role & ENUM & admin, editor, user \\
+      & created\_at & TIMESTAMP & Registration date \\
+\midrule
+categories & id & INT PK AUTO & Primary key \\
+           & name & VARCHAR(255) & Category name \\
+\midrule
+posts & id & INT PK AUTO & Primary key \\
+      & user\_id & INT FK & References users(id) \\
+      & category\_id & INT FK & References categories(id) \\
+      & title & VARCHAR(255) & Post title \\
+      & content & LONGTEXT & Post body \\
+      & image & VARCHAR(255) & Uploaded image filename \\
+      & created\_at & TIMESTAMP & Creation date \\
+      & updated\_at & TIMESTAMP & Last modified \\
+\bottomrule
+\end{tabular}
+\caption{Database schema}
+\end{table}
+
+\section{Key Features}
+\begin{itemize}
+    \item User registration and login with bcrypt password hashing
+    \item Role-based access control (Admin, Editor, User)
+    \item Full CRUD operations for blog posts
+    \item Featured image upload with file type validation
+    \item Category system for organizing posts
+    \item Search posts by title and content
+    \item Responsive, mobile-first design inspired by Medium/Dev.to
+    \item AJAX-powered interactions (no page reloads for forms)
+    \item Toast notification system
+    \item Admin panel for user management
+    \item XSS protection via \texttt{htmlspecialchars()}
+    \item SQL injection prevention via PDO prepared statements
+    \item CSRF token protection
+\end{itemize}
+
+\section{Security Measures}
+\begin{enumerate}
+    \item \textbf{Password Hashing}: All passwords are hashed using PHP's \texttt{password\_hash()} with \texttt{PASSWORD\_BCRYPT} before storage.
+    \item \textbf{Prepared Statements}: Every SQL query uses PDO prepared statements with parameterized values --- never string concatenation.
+    \item \textbf{Session-Based Auth}: User identity is stored in \texttt{\$\_SESSION} after login. Protected pages check \texttt{\$\_SESSION['user\_id']} before rendering.
+    \item \textbf{Ownership Checks}: Users can only edit/delete their own posts unless they are admin.
+    \item \textbf{Input Validation}: Both frontend (JavaScript) and backend (PHP) validate all inputs.
+    \item \textbf{XSS Protection}: All user-generated output is escaped with \texttt{htmlspecialchars()} in PHP and a custom \texttt{esc()} function in JavaScript.
+    \item \textbf{File Upload Validation}: Image uploads are validated by MIME type and file size.
+\end{enumerate}
+
+
+% ============================================================
+% CHAPTER 2: S M RAHMAN MOMIN
+% ============================================================
+\chapter{Developer 1: S M Rahman Momin}
+\textit{Role: Project Foundation, Database Models, and UI Styling}\\
+\textit{Period: March 2 -- March 19, 2026 (7 commits, 17 files)}
+
+S M Rahman Momin was responsible for the foundational infrastructure of the project. This includes the project configuration, database schema design, the central routing system, security middleware, all three data models (User, Post, Category), and the complete CSS stylesheet.
+
+% --- .htaccess ---
+\section{.htaccess --- Apache URL Rewriting}
+This file configures Apache's \texttt{mod\_rewrite} module to enable clean, friendly URLs like \texttt{/feedbook/login} instead of direct file paths.
+
+\begin{lstlisting}[language={}]
+RewriteEngine On
+RewriteBase /feedbook/
+
+# If the requested file exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise, route everything through index.php
+RewriteRule ^(.*)$ index.php [QSA,L]
+\end{lstlisting}
+
+\textbf{Line-by-line explanation:}
+\begin{itemize}
+    \item \textbf{Line 1}: Enables the Apache rewrite engine for this directory.
+    \item \textbf{Line 2}: Sets the base URL path so all rewrite rules are relative to \texttt{/feedbook/}.
+    \item \textbf{Lines 4--5}: Two conditions that check if the requested URL corresponds to an actual file (\texttt{-f}) or directory (\texttt{-d}) on disk. If it does, Apache serves it directly (e.g., CSS, JS, images).
+    \item \textbf{Line 8}: If neither condition is met, the URL is rewritten to \texttt{index.php}. The \texttt{[QSA]} flag appends any query string, and \texttt{[L]} marks this as the last rule.
+\end{itemize}
+
+% --- config.php ---
+\section{backend/config/config.php --- Application Constants}
+This file defines all global constants used throughout the application.
+
+\begin{lstlisting}[language=PHP]
+<?php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'feedbook');
+define('SITE_URL', 'http://localhost:8080/feedbook');
+define('UPLOAD_DIR', __DIR__ . '/../../uploads/');
+define('MAX_IMAGE_SIZE', 5 * 1024 * 1024); // 5MB
+define('ALLOWED_IMAGE_TYPES', ['image/jpeg', 'image/png',
+    'image/gif', 'image/webp']);
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+date_default_timezone_set('Asia/Dhaka');
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Lines 2--5}: Database connection constants matching the default XAMPP MySQL configuration (root user, no password).
+    \item \textbf{Line 6}: The full base URL of the application, used for generating links.
+    \item \textbf{Line 7}: Absolute filesystem path to the uploads directory. \texttt{\_\_DIR\_\_} gives the current file's directory, and \texttt{../../} navigates up to the project root.
+    \item \textbf{Lines 8--9}: Security constants for image uploads --- maximum file size (5MB) and allowed MIME types.
+    \item \textbf{Lines 12--14}: Development settings: show all errors and set the timezone to Asia/Dhaka (Bangladesh Standard Time, UTC+6).
+\end{itemize}
+
+% --- database.php ---
+\section{backend/config/database.php --- PDO Connection Class}
+
+\begin{lstlisting}[language=PHP]
+<?php
+if (!defined('DB_HOST')) {
+    require_once __DIR__ . '/config.php';
+}
+
+class Database {
+    private $conn;
+
+    public function connect() {
+        if ($this->conn !== null) {
+            return $this->conn;
+        }
+        try {
+            $dsn = 'mysql:host=' . DB_HOST . ';dbname='
+                   . DB_NAME . ';charset=utf8mb4';
+            $this->conn = new PDO($dsn, DB_USER, DB_PASS);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE,
+                PDO::ERRMODE_EXCEPTION);
+            $this->conn->setAttribute(
+                PDO::ATTR_DEFAULT_FETCH_MODE,
+                PDO::FETCH_ASSOC);
+            return $this->conn;
+        } catch (PDOException $e) {
+            die('Database Connection Failed: '
+                . $e->getMessage());
+        }
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Lines 2--4}: Guard clause that loads \texttt{config.php} only if constants are not already defined. This prevents double-loading errors when the file is included from different paths.
+    \item \textbf{Lines 6--7}: Declares a \texttt{Database} class with a private \texttt{\$conn} property to hold the PDO instance.
+    \item \textbf{Lines 9--12}: The \texttt{connect()} method implements the \textbf{singleton pattern} --- if a connection already exists, it returns the cached one instead of creating a new connection. This prevents opening multiple unnecessary database connections.
+    \item \textbf{Line 14--15}: Constructs the DSN (Data Source Name) string for PDO with \texttt{utf8mb4} charset, which supports full Unicode including emojis.
+    \item \textbf{Lines 16--22}: Creates the PDO connection and configures two critical attributes:
+    \begin{itemize}
+        \item \texttt{ERRMODE\_EXCEPTION}: Makes PDO throw exceptions on errors instead of failing silently.
+        \item \texttt{FETCH\_ASSOC}: Returns query results as associative arrays (column names as keys).
+    \end{itemize}
+    \item \textbf{Lines 24--26}: If the connection fails, \texttt{die()} stops execution and displays the error message. In production, this would be logged instead.
+\end{itemize}
+
+% --- index.php ---
+\section{index.php --- Central Router}
+This is the application's entry point. Every HTTP request is routed through this file.
+
+\begin{lstlisting}[language=PHP]
+<?php
+session_start();
+require_once __DIR__ . '/backend/config/config.php';
+
+$request_uri = parse_url(
+    $_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$base_path = '/feedbook';
+$route = trim(
+    str_replace($base_path, '', $request_uri), '/');
+
+// --- PAGE ROUTES ---
+if (empty($route)) {
+    include __DIR__ . '/frontend/pages/home.php';
+} elseif ($route === 'login') {
+    include __DIR__ . '/frontend/pages/login.php';
+} elseif ($route === 'register') {
+    include __DIR__ . '/frontend/pages/register.php';
+} elseif ($route === 'dashboard'
+          && isset($_SESSION['user_id'])) {
+    include __DIR__ . '/frontend/pages/dashboard.php';
+} elseif ($route === 'profile'
+          && isset($_SESSION['user_id'])) {
+    include __DIR__ . '/frontend/pages/profile.php';
+} elseif ($route === 'create-post'
+          && isset($_SESSION['user_id'])) {
+    include __DIR__ . '/frontend/pages/create-post.php';
+} elseif ($route === 'edit-post'
+          && isset($_SESSION['user_id'])) {
+    include __DIR__ . '/frontend/pages/edit-post.php';
+} elseif (preg_match('/^post\/(\d+)$/', $route, $m)) {
+    $_GET['id'] = $m[1];
+    include __DIR__ . '/frontend/pages/single-post.php';
+} elseif ($route === 'admin-users'
+          && isset($_SESSION['user_id'])
+          && ($_SESSION['role'] ?? '') === 'admin') {
+    include __DIR__ . '/frontend/pages/admin-users.php';
+// --- API ROUTES ---
+} elseif (strpos($route, 'api/') === 0) {
+    $api_route = str_replace('api/', '', $route);
+    $api_file = __DIR__ . '/backend/api/'
+                . $api_route . '.php';
+    if (file_exists($api_file)) {
+        include $api_file;
+    } else {
+        header('HTTP/1.1 404 Not Found');
+        header('Content-Type: application/json');
+        echo json_encode(
+            ['error' => 'API endpoint not found']);
+    }
+} else {
+    include __DIR__ . '/frontend/pages/home.php';
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 2}: \texttt{session\_start()} initializes the PHP session system. This must be called before any session data can be read or written.
+    \item \textbf{Lines 5--9}: Extracts the route from the URL. For example, if the user visits \texttt{http://localhost:8080/feedbook/dashboard}, the \texttt{\$route} becomes \texttt{"dashboard"}.
+    \item \textbf{Lines 12--13}: Empty route means the user visited \texttt{/feedbook/} --- serve the homepage.
+    \item \textbf{Lines 19--30}: Protected routes (dashboard, profile, create-post, edit-post) check \texttt{\$\_SESSION['user\_id']} is set. If the user is not logged in, these routes are skipped and the fallback (line 51) serves the homepage.
+    \item \textbf{Lines 31--33}: Uses a \textbf{regular expression} to match URLs like \texttt{/post/42}. The captured group \texttt{(\textbackslash d+)} extracts the post ID and injects it into \texttt{\$\_GET['id']}.
+    \item \textbf{Lines 34--37}: The admin page requires both authentication \textit{and} the admin role.
+    \item \textbf{Lines 39--50}: API routes are handled dynamically. The route \texttt{api/login} maps to the file \texttt{backend/api/login.php}. If the file does not exist, a 404 JSON response is returned.
+\end{itemize}
+
+% --- AuthMiddleware ---
+\section{backend/middleware/AuthMiddleware.php}
+Provides reusable authentication checks for protecting routes.
+
+\begin{lstlisting}[language=PHP]
+<?php
+class AuthMiddleware {
+    public static function require_login() {
+        if (!isset($_SESSION['user_id'])) {
+            if (strpos($_SERVER['REQUEST_URI'],
+                       '/api/') !== false) {
+                header('Content-Type: application/json');
+                http_response_code(401);
+                echo json_encode(['success' => false,
+                    'message' => 'Login required']);
+                exit;
+            }
+            header('Location: /feedbook/login');
+            exit;
+        }
+    }
+
+    public static function require_admin() {
+        self::require_login();
+        if (($_SESSION['role'] ?? '') !== 'admin') {
+            if (strpos($_SERVER['REQUEST_URI'],
+                       '/api/') !== false) {
+                header('Content-Type: application/json');
+                http_response_code(403);
+                echo json_encode(['success' => false,
+                    'message' => 'Admin access required']);
+                exit;
+            }
+            header('Location: /feedbook/');
+            exit;
+        }
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{\texttt{require\_login()}}: Checks if the user is authenticated. If not, the behavior depends on the request type:
+    \begin{itemize}
+        \item \textbf{API request} (URL contains \texttt{/api/}): Returns a 401 JSON error.
+        \item \textbf{Page request}: Redirects to the login page with \texttt{exit} to stop further execution.
+    \end{itemize}
+    \item \textbf{\texttt{require\_admin()}}: First calls \texttt{require\_login()} to ensure the user is logged in, then checks if their role is \texttt{'admin'}. Uses the null coalescing operator (\texttt{??}) to safely handle missing session data.
+\end{itemize}
+
+% --- CsrfMiddleware ---
+\section{backend/middleware/CsrfMiddleware.php}
+
+\begin{lstlisting}[language=PHP]
+<?php
+class CsrfMiddleware {
+    public static function generate_token() {
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] =
+                bin2hex(random_bytes(32));
+        }
+        return $_SESSION['csrf_token'];
+    }
+
+    public static function validate_token($token) {
+        return isset($_SESSION['csrf_token'])
+            && hash_equals(
+                $_SESSION['csrf_token'], $token);
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{\texttt{generate\_token()}}: Creates a cryptographically secure random token (64 hex characters = 256 bits of entropy) and stores it in the session. If a token already exists, it reuses it.
+    \item \textbf{\texttt{validate\_token()}}: Compares the submitted token against the session token using \texttt{hash\_equals()}, which performs a \textbf{timing-safe comparison} to prevent timing attacks.
+\end{itemize}
+
+% --- UserModel ---
+\section{backend/models/UserModel.php}
+This model handles all database operations for the \texttt{users} table.
+
+\begin{lstlisting}[language=PHP]
+<?php
+require_once __DIR__ . '/../config/database.php';
+
+class UserModel {
+    private $db;
+
+    public function __construct() {
+        $this->db = (new Database())->connect();
+    }
+
+    public function create($name, $email, $password) {
+        $stmt = $this->db->prepare(
+            "INSERT INTO users (name, email, password,
+             role) VALUES (?, ?, ?, 'user')");
+        $stmt->execute([$name, $email, $password]);
+        return $this->db->lastInsertId();
+    }
+
+    public function get_by_email($email) {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
+        return $stmt->fetch();
+    }
+
+    public function get_by_id($id) {
+        $stmt = $this->db->prepare(
+            "SELECT id, name, email, role, created_at
+             FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
+    public function get_all() {
+        $stmt = $this->db->prepare(
+            "SELECT id, name, email, role, created_at
+             FROM users ORDER BY created_at DESC");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function update($id, $name, $email) {
+        $stmt = $this->db->prepare(
+            "UPDATE users SET name = ?, email = ?
+             WHERE id = ?");
+        return $stmt->execute([$name, $email, $id]);
+    }
+
+    public function delete($id) {
+        $stmt = $this->db->prepare(
+            "DELETE FROM users WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Constructor (Line 7--8)}: Creates a new \texttt{Database} instance and calls \texttt{connect()} to get the PDO connection. Every model follows this same pattern.
+    \item \textbf{\texttt{create()}}: Inserts a new user with the role defaulting to \texttt{'user'}. Uses \texttt{?} placeholders (positional parameters) for SQL injection prevention. Returns the auto-generated ID.
+    \item \textbf{\texttt{get\_by\_email()}}: Retrieves a complete user record (including password hash) for login verification. Uses \texttt{SELECT *} because the password field is needed for \texttt{password\_verify()}.
+    \item \textbf{\texttt{get\_by\_id()}}: Returns user data \textit{without} the password field --- used for displaying profile information safely.
+    \item \textbf{\texttt{get\_all()}}: Returns all users sorted by newest first. Used by the admin panel.
+    \item \textbf{\texttt{update()} and \texttt{delete()}}: Standard update and delete operations with prepared statements.
+\end{itemize}
+
+% --- PostModel ---
+\section{backend/models/PostModel.php}
+The most complex model, handling post CRUD, search, and category filtering with JOIN queries.
+
+\begin{lstlisting}[language=PHP]
+<?php
+require_once __DIR__ . '/../config/database.php';
+
+class PostModel {
+    private $db;
+
+    public function __construct() {
+        $this->db = (new Database())->connect();
+    }
+
+    public function create($title, $content, $user_id,
+                           $category_id = null,
+                           $image = null) {
+        $stmt = $this->db->prepare(
+            "INSERT INTO posts (title, content, user_id,
+             category_id, image) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$title, $content, $user_id,
+                        $category_id, $image]);
+        return $this->db->lastInsertId();
+    }
+
+    public function get_all($category_id = null) {
+        $sql = "SELECT posts.*, users.name AS author,
+                categories.name AS category_name
+                FROM posts
+                LEFT JOIN users
+                    ON posts.user_id = users.id
+                LEFT JOIN categories
+                    ON posts.category_id = categories.id";
+        $params = [];
+        if ($category_id) {
+            $sql .= " WHERE posts.category_id = ?";
+            $params[] = $category_id;
+        }
+        $sql .= " ORDER BY posts.created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    public function search($query) {
+        $q = "%$query%";
+        $stmt = $this->db->prepare(
+            "SELECT posts.*, users.name AS author,
+             categories.name AS category_name
+             FROM posts
+             LEFT JOIN users
+                ON posts.user_id = users.id
+             LEFT JOIN categories
+                ON posts.category_id = categories.id
+             WHERE posts.title LIKE ?
+                OR posts.content LIKE ?
+             ORDER BY posts.created_at DESC");
+        $stmt->execute([$q, $q]);
+        return $stmt->fetchAll();
+    }
+
+    public function update($id, $title, $content,
+                           $category_id = null,
+                           $image = null) {
+        if ($image) {
+            $stmt = $this->db->prepare(
+                "UPDATE posts SET title=?, content=?,
+                 category_id=?, image=? WHERE id=?");
+            return $stmt->execute([$title, $content,
+                $category_id, $image, $id]);
+        }
+        $stmt = $this->db->prepare(
+            "UPDATE posts SET title=?, content=?,
+             category_id=? WHERE id=?");
+        return $stmt->execute([$title, $content,
+            $category_id, $id]);
+    }
+
+    public function delete($id) {
+        $stmt = $this->db->prepare(
+            "DELETE FROM posts WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{\texttt{create()}}: Accepts optional \texttt{category\_id} and \texttt{image} parameters (both default to \texttt{null}). The database column allows NULL values for these fields.
+    \item \textbf{\texttt{get\_all()}}: Uses \textbf{LEFT JOIN} to fetch posts along with author names and category names from related tables. \texttt{LEFT JOIN} (vs. \texttt{INNER JOIN}) ensures posts are returned even if they have no category assigned. The optional \texttt{\$category\_id} parameter dynamically adds a \texttt{WHERE} clause for category filtering.
+    \item \textbf{\texttt{search()}}: Uses SQL \texttt{LIKE} with \texttt{\%} wildcards to perform substring matching on both title and content fields. The same search query is bound to both placeholders.
+    \item \textbf{\texttt{update()}}: Conditionally includes the \texttt{image} field in the UPDATE query. If no new image is uploaded, the existing image is preserved by omitting it from the query.
+\end{itemize}
+
+% --- CategoryModel ---
+\section{backend/models/CategoryModel.php}
+
+\begin{lstlisting}[language=PHP]
+<?php
+require_once __DIR__ . '/../config/database.php';
+
+class CategoryModel {
+    private $db;
+
+    public function __construct() {
+        $this->db = (new Database())->connect();
+    }
+
+    public function get_all() {
+        $stmt = $this->db->prepare(
+            "SELECT * FROM categories ORDER BY name ASC");
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function create($name) {
+        $stmt = $this->db->prepare(
+            "INSERT INTO categories (name) VALUES (?)");
+        $stmt->execute([$name]);
+        return $this->db->lastInsertId();
+    }
+
+    public function delete($id) {
+        $stmt = $this->db->prepare(
+            "DELETE FROM categories WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:} A simple CRUD model for the \texttt{categories} table. Categories are sorted alphabetically (\texttt{ORDER BY name ASC}) for consistent display in dropdown menus and the sidebar.
+
+% --- style.css ---
+\section{frontend/css/style.css --- Complete Stylesheet}
+The CSS file implements a modern, responsive design inspired by Medium and Dev.to. Key design sections include:
+
+\begin{itemize}
+    \item \textbf{CSS Custom Properties (Variables)}: Defines a complete design token system with colors, shadows, border radiuses, and font families for consistency.
+    \item \textbf{Navigation Bar}: Sticky navbar with glassmorphism effect (\texttt{backdrop-filter: blur(8px)}) and gradient logo.
+    \item \textbf{Search Bar}: Pill-shaped input with focus ring animation.
+    \item \textbf{Hero Section}: Full-width gradient banner with SVG dot pattern overlay.
+    \item \textbf{Post Cards}: Card-based layout with image, category badge, title, excerpt, author, and date. Includes hover lift animations (\texttt{transform: translateY(-3px)}).
+    \item \textbf{Dashboard Layout}: CSS Grid two-column layout (\texttt{grid-template-columns: 260px 1fr}) with a sticky sidebar.
+    \item \textbf{Form Styles}: Modern inputs with focus borders and shadow rings.
+    \item \textbf{Toast Notifications}: Fixed-position toast messages with slide-in/out animations.
+    \item \textbf{Responsive Design}: Three breakpoints (900px, 768px, 480px) that collapse the sidebar, stack the navigation, and adjust typography.
+\end{itemize}
+
+The complete file is 260 lines and uses the 8px spacing system for consistent visual rhythm throughout the application.
+
+
+% ============================================================
+% CHAPTER 3: SHEIKH SADI
+% ============================================================
+\chapter{Developer 2: Sheikh Sadi}
+\textit{Role: Backend Controllers and API Endpoints}\\
+\textit{Period: March 22 -- April 6, 2026 (7 commits, 17 files)}
+
+Sheikh Sadi was responsible for all business logic (controllers) and the RESTful API layer. The controllers coordinate between the data models and the API responses, while the API endpoints handle HTTP requests from the JavaScript frontend.
+
+% --- AuthController ---
+\section{backend/controllers/AuthController.php}
+
+\begin{lstlisting}[language=PHP]
+<?php
+require_once __DIR__ . '/../models/UserModel.php';
+
+class AuthController {
+    public static function login($email, $password) {
+        try {
+            $m = new UserModel();
+            $user = $m->get_by_email($email);
+            if (!$user || !password_verify(
+                    $password, $user['password'])) {
+                return ['success' => false,
+                    'message' => 'Invalid email or password'];
+            }
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['name']    = $user['name'];
+            $_SESSION['email']   = $user['email'];
+            $_SESSION['role']    = $user['role'];
+            return ['success' => true,
+                'message' => 'Login successful'];
+        } catch (Exception $e) {
+            return ['success' => false,
+                'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+
+    public static function register($name, $email,
+                     $password, $confirm = null) {
+        try {
+            if (empty($name) || empty($email)
+                || empty($password)) {
+                return ['success' => false,
+                    'message' => 'All fields are required'];
+            }
+            if ($confirm !== null
+                && $password !== $confirm) {
+                return ['success' => false,
+                    'message' => 'Passwords do not match'];
+            }
+            if (strlen($password) < 6) {
+                return ['success' => false,
+                    'message' =>
+                    'Password must be at least 6 chars'];
+            }
+            if (!filter_var($email,
+                            FILTER_VALIDATE_EMAIL)) {
+                return ['success' => false,
+                    'message' => 'Invalid email address'];
+            }
+            $m = new UserModel();
+            if ($m->get_by_email($email)) {
+                return ['success' => false,
+                    'message' => 'Email already registered'];
+            }
+            $m->create($name, $email,
+                password_hash($password, PASSWORD_BCRYPT));
+            return ['success' => true,
+                'message' =>
+                'Registration successful! Please login.'];
+        } catch (Exception $e) {
+            return ['success' => false,
+                'message' => 'Error: ' . $e->getMessage()];
+        }
+    }
+
+    public static function logout() {
+        $_SESSION = [];
+        session_destroy();
+        return ['success' => true];
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{\texttt{login()}}: Retrieves the user by email, then uses PHP's \texttt{password\_verify()} to compare the submitted password against the stored bcrypt hash. On success, stores the user's ID, name, email, and role in \texttt{\$\_SESSION}. Returns a consistent JSON-ready associative array.
+    \item \textbf{\texttt{register()}}: Performs five validation checks: (1) all fields present, (2) passwords match, (3) minimum 6 characters, (4) valid email format via \texttt{filter\_var()}, (5) email not already taken. On success, hashes the password with \texttt{PASSWORD\_BCRYPT} before storing.
+    \item \textbf{\texttt{logout()}}: Clears all session data with \texttt{\$\_SESSION = []} and destroys the session entirely.
+    \item All methods use try-catch blocks to gracefully handle database errors.
+\end{itemize}
+
+% --- PostController ---
+\section{backend/controllers/PostController.php}
+
+\begin{lstlisting}[language=PHP]
+<?php
+require_once __DIR__ . '/../models/PostModel.php';
+
+class PostController {
+    public static function create($title, $content,
+            $user_id, $category_id=null, $image=null) {
+        try {
+            if (empty($title) || empty($content)) {
+                return ['success' => false,
+                    'message' =>
+                    'Title and content are required'];
+            }
+            $id = (new PostModel())->create($title,
+                $content, $user_id, $category_id, $image);
+            return ['success' => true,
+                'message' => 'Post created!', 'id' => $id];
+        } catch (Exception $e) {
+            return ['success' => false,
+                'message' => 'Error: '.$e->getMessage()];
+        }
+    }
+
+    public static function delete($id, $user_id) {
+        try {
+            $post = (new PostModel())->get_by_id($id);
+            if (!$post) return ['success' => false,
+                'message' => 'Post not found'];
+            if ($post['user_id'] != $user_id
+                && ($_SESSION['role'] ?? '') !== 'admin') {
+                return ['success' => false,
+                    'message' => 'Not authorized'];
+            }
+            if ($post['image'] && file_exists(
+                __DIR__.'/../../uploads/'.$post['image'])) {
+                unlink(__DIR__.'/../../uploads/'
+                       .$post['image']);
+            }
+            (new PostModel())->delete($id);
+            return ['success'=>true,
+                'message'=>'Post deleted!'];
+        } catch (Exception $e) {
+            return ['success'=>false,
+                'message'=>'Error: '.$e->getMessage()];
+        }
+    }
+
+    public static function handleImageUpload($file) {
+        if (!$file || $file['error'] !== UPLOAD_ERR_OK)
+            return null;
+        $allowed = ['image/jpeg', 'image/png',
+                    'image/gif', 'image/webp'];
+        if (!in_array($file['type'], $allowed))
+            return null;
+        if ($file['size'] > 5 * 1024 * 1024) return null;
+        $ext = pathinfo($file['name'],
+                        PATHINFO_EXTENSION);
+        $filename = uniqid('post_', true) . '.' . $ext;
+        $dest = __DIR__.'/../../uploads/'.$filename;
+        if (!is_dir(dirname($dest)))
+            mkdir(dirname($dest), 0777, true);
+        if (move_uploaded_file($file['tmp_name'], $dest))
+            return $filename;
+        return null;
+    }
+}
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{\texttt{delete()}}: Implements an \textbf{ownership check} --- only the post author or an admin can delete a post. If the post has an associated image file, it deletes the physical file from disk using \texttt{unlink()} before removing the database record.
+    \item \textbf{\texttt{handleImageUpload()}}: A complete image upload handler that:
+    \begin{enumerate}
+        \item Checks for upload errors (\texttt{UPLOAD\_ERR\_OK}).
+        \item Validates the MIME type against an allowlist.
+        \item Checks the file size (max 5MB).
+        \item Generates a unique filename using \texttt{uniqid()} with \texttt{true} for extra entropy to prevent collisions.
+        \item Moves the file from PHP's temp directory to the \texttt{uploads/} folder.
+        \item Returns the generated filename on success, or \texttt{null} on failure.
+    \end{enumerate}
+\end{itemize}
+
+% --- API: login.php ---
+\section{backend/api/login.php --- Login Endpoint}
+
+\begin{lstlisting}[language=PHP]
+<?php
+header('Content-Type: application/json');
+require_once __DIR__.'/../controllers/AuthController.php';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success'=>false,
+        'message'=>'POST only']);
+    exit;
+}
+$data = json_decode(
+    file_get_contents('php://input'), true);
+echo json_encode(
+    AuthController::login(
+        trim($data['email'] ?? ''),
+        $data['password'] ?? ''));
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 2}: Sets the response Content-Type to JSON so browsers and JavaScript know to parse the response as JSON.
+    \item \textbf{Lines 4--8}: Method guard --- only accepts POST requests. GET/PUT/DELETE will receive an error.
+    \item \textbf{Lines 9--10}: Reads the raw request body (\texttt{php://input}) and parses it as JSON. This is necessary because the JavaScript frontend sends data as \texttt{application/json}, not traditional form encoding.
+    \item \textbf{Lines 11--14}: Calls the controller, trims the email input, and encodes the result as JSON.
+\end{itemize}
+
+% --- API: create_post.php ---
+\section{backend/api/create\_post.php --- With Image Upload}
+
+\begin{lstlisting}[language=PHP]
+<?php
+header('Content-Type: application/json');
+if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success'=>false,
+        'message'=>'Login required']);
+    exit;
+}
+require_once __DIR__.'/../controllers/PostController.php';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode(['success'=>false,
+        'message'=>'POST only']);
+    exit;
+}
+
+$title = trim($_POST['title'] ?? '');
+$content = trim($_POST['content'] ?? '');
+$category_id = $_POST['category_id'] ?? null;
+if (empty($category_id)) $category_id = null;
+
+$image = PostController::handleImageUpload(
+    $_FILES['image'] ?? null);
+echo json_encode(PostController::create(
+    $title, $content, $_SESSION['user_id'],
+    $category_id, $image));
+?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Lines 3--8}: Authentication check --- returns HTTP 401 if the user is not logged in.
+    \item \textbf{Lines 16--19}: Note that this endpoint uses \texttt{\$\_POST} instead of \texttt{json\_decode(php://input)}. This is because the JavaScript frontend sends the data as \texttt{FormData} (multipart/form-data) to support file uploads. PHP automatically populates \texttt{\$\_POST} and \texttt{\$\_FILES} for multipart requests.
+    \item \textbf{Lines 21--22}: Calls the image upload handler which returns a filename or null.
+\end{itemize}
+
+\textit{Note: The remaining API endpoints (register.php, logout.php, posts.php, update\_post.php, delete\_post.php, search.php, single\_post.php, categories.php, users.php, me.php, csrf.php) follow the same patterns shown above. Each endpoint: (1) sets JSON headers, (2) checks authentication if needed, (3) validates the HTTP method, (4) reads input data, (5) calls the appropriate controller method, and (6) returns the JSON result.}
+
+
+% ============================================================
+% CHAPTER 4: ABRAR HASAN CHOWDHURY
+% ============================================================
+\chapter{Developer 3: Abrar Hasan Chowdhury}
+\textit{Role: Frontend Pages, Components, and JavaScript}\\
+\textit{Period: April 8 -- April 20, 2026 (7 commits, 13 files)}
+
+Abrar Hasan Chowdhury built all user-facing interface components, the nine page templates, and the complete JavaScript application logic including AJAX communication, form handling, search, and dynamic UI updates.
+
+% --- header.php ---
+\section{frontend/components/header.php}
+The header component is included at the top of every page. It contains the HTML document head, navigation bar, search form, and toast notification container.
+
+\begin{lstlisting}[language=PHP]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="FeedBook - A modern multi-author
+        blogging platform.">
+    <title><?= $pageTitle ?? 'FeedBook' ?></title>
+    <link rel="preconnect"
+        href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?
+        family=Inter:wght@400;500;600;700;800
+        &display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="/feedbook/frontend/css/style.css">
+</head>
+<body>
+<div id="toastContainer"
+     class="toast-container"></div>
+
+<nav class="navbar">
+  <div class="container navbar-content">
+    <a href="/feedbook/" class="logo">FeedBook</a>
+
+    <form class="search-bar" id="searchForm"
+          action="javascript:void(0)"
+          onsubmit="handleSearch(event)">
+      <input type="text" id="searchInput"
+             placeholder="Search posts...">
+      <button type="submit"
+              class="search-btn">Search</button>
+    </form>
+
+    <button class="mobile-menu-btn"
+      onclick="document.querySelector('.nav-menu')
+        .classList.toggle('active')">Menu</button>
+
+    <ul class="nav-menu">
+      <li><a href="/feedbook/">Home</a></li>
+      <?php if (isset($_SESSION['user_id'])): ?>
+        <li><a href="/feedbook/dashboard">
+            Dashboard</a></li>
+        <li><a href="/feedbook/create-post">
+            New Post</a></li>
+        <li><a href="/feedbook/profile">
+            Profile</a></li>
+        <?php if (($_SESSION['role']??'')==='admin'):?>
+          <li><a href="/feedbook/admin-users">
+              Admin</a></li>
+        <?php endif; ?>
+        <li><a href="/feedbook/api/logout"
+            class="btn btn-outline btn-small">
+            Logout</a></li>
+      <?php else: ?>
+        <li><a href="/feedbook/login">Login</a></li>
+        <li><a href="/feedbook/register"
+            class="btn btn-primary btn-small">
+            Register</a></li>
+      <?php endif; ?>
+    </ul>
+  </div>
+</nav>
+
+<div id="searchResults"
+     class="search-results-overlay hidden"></div>
+
+<main class="container">
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 10}: Uses the PHP short echo tag \texttt{<?=} to output the \texttt{\$pageTitle} variable set by each page, with \texttt{'FeedBook'} as the fallback.
+    \item \textbf{Lines 11--15}: Loads the Inter font from Google Fonts for modern typography.
+    \item \textbf{Lines 21--22}: An empty div that JavaScript uses to display toast notifications.
+    \item \textbf{Lines 28--31}: The search form uses \texttt{action="javascript:void(0)"} to prevent page submission. The \texttt{onsubmit} attribute calls the JavaScript \texttt{handleSearch()} function.
+    \item \textbf{Lines 37--39}: The mobile menu button toggles the \texttt{.active} class on the nav menu for responsive mobile navigation.
+    \item \textbf{Lines 43--61}: PHP conditional rendering --- shows different navigation links based on login state. Admin-only links are wrapped in a role check.
+    \item \textbf{Line 64}: Opens the \texttt{<main>} tag, which is closed by \texttt{footer.php}.
+\end{itemize}
+
+% --- sidebar.php ---
+\section{frontend/components/sidebar.php}
+
+\begin{lstlisting}[language=PHP]
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">
+        <?= strtoupper(
+            substr($_SESSION['name']??'U', 0, 1)) ?>
+      </div>
+      <div>
+        <strong><?= htmlspecialchars(
+            $_SESSION['name'] ?? '') ?></strong>
+        <span class="sidebar-role">
+          <?= ucfirst($_SESSION['role'] ?? 'user') ?>
+        </span>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="/feedbook/dashboard"
+       class="sidebar-link <?=
+       ($currentPage??'')==='dashboard'
+       ?'active':''?>">Dashboard</a>
+    <a href="/feedbook/create-post"
+       class="sidebar-link <?=
+       ($currentPage??'')==='create-post'
+       ?'active':''?>">New Post</a>
+    <a href="/feedbook/profile"
+       class="sidebar-link <?=
+       ($currentPage??'')==='profile'
+       ?'active':''?>">Profile</a>
+    <?php if (($_SESSION['role']??'')==='admin'):?>
+      <a href="/feedbook/admin-users"
+         class="sidebar-link">Manage Users</a>
+    <?php endif; ?>
+  </nav>
+  <div class="sidebar-section">
+    <h4>Categories</h4>
+    <div id="sidebar-categories"></div>
+  </div>
+</aside>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Lines 5--6}: Generates a letter avatar by taking the first character of the user's name, converting to uppercase.
+    \item \textbf{Line 9}: Uses \texttt{htmlspecialchars()} to prevent XSS when outputting the user's name.
+    \item \textbf{Lines 20--21}: Active link highlighting --- compares the \texttt{\$currentPage} variable (set by each page before including the sidebar) against the link name, adding the \texttt{active} CSS class.
+    \item \textbf{Line 38}: An empty div that JavaScript populates with category links loaded from the API.
+\end{itemize}
+
+% --- home.php ---
+\section{frontend/pages/home.php --- Public Homepage}
+
+\begin{lstlisting}[language=PHP]
+<?php $pageTitle = 'FeedBook - Share Your Stories'; ?>
+<?php include __DIR__.'/../components/header.php'; ?>
+
+<section class="hero">
+  <h1>Share Your Stories<br>With The World</h1>
+  <p>A modern platform for writers, thinkers,
+     and creators.</p>
+  <?php if (!isset($_SESSION['user_id'])): ?>
+    <div class="hero-actions">
+      <a href="/feedbook/register"
+         class="btn btn-white btn-large">
+         Get Started</a>
+      <a href="/feedbook/login"
+         class="btn btn-ghost btn-large">
+         Sign In</a>
+    </div>
+  <?php else: ?>
+    <a href="/feedbook/create-post"
+       class="btn btn-white btn-large">
+       Write a Post</a>
+  <?php endif; ?>
+</section>
+
+<section class="category-filter" id="categoryFilter">
+  <button class="cat-btn active"
+          data-cat="">All</button>
+</section>
+
+<section class="posts-section">
+  <h2>Latest Posts</h2>
+  <div class="posts-grid" id="homePosts">
+    <div class="loading-spinner">
+        Loading posts...</div>
+  </div>
+</section>
+
+<?php include __DIR__.'/../components/footer.php'; ?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 1}: Sets the page title that will be used by \texttt{header.php}.
+    \item \textbf{Lines 4--22}: The hero section displays different CTAs based on login state.
+    \item \textbf{Lines 24--27}: The category filter starts with only an ``All'' button. JavaScript dynamically adds more category buttons by fetching from the API.
+    \item \textbf{Lines 31--34}: The posts grid shows a loading spinner initially. JavaScript replaces this with actual post cards fetched from the \texttt{/api/posts} endpoint.
+\end{itemize}
+
+% --- dashboard.php ---
+\section{frontend/pages/dashboard.php}
+
+\begin{lstlisting}[language=PHP]
+<?php
+if (!isset($_SESSION['user_id'])) {
+    header('Location: /feedbook/login'); exit;
+}
+$pageTitle = 'Dashboard - FeedBook';
+$currentPage = 'dashboard';
+?>
+<?php include __DIR__.'/../components/header.php'; ?>
+
+<div class="dashboard-layout">
+  <?php include __DIR__.'/../components/sidebar.php'; ?>
+  <div class="dashboard-main">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <a href="/feedbook/create-post"
+         class="btn btn-primary">+ New Post</a>
+    </div>
+    <p class="welcome-text">Welcome back,
+       <strong><?= htmlspecialchars(
+         $_SESSION['name'] ?? '') ?></strong>!</p>
+    <div class="posts-grid" id="posts-container">
+      <div class="loading-spinner">
+          Loading your posts...</div>
+    </div>
+  </div>
+</div>
+
+<?php include __DIR__.'/../components/footer.php'; ?>
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Lines 2--4}: Server-side authentication guard. If not logged in, the user is redirected to the login page and \texttt{exit} stops any further code execution.
+    \item \textbf{Line 6}: Sets \texttt{\$currentPage} which the sidebar uses to highlight the active navigation link.
+    \item \textbf{Line 10}: Uses the \texttt{dashboard-layout} CSS class which creates a two-column grid (sidebar + main content).
+    \item \textbf{Lines 21--23}: JavaScript will replace the loading spinner with the user's own posts, fetched from the API and filtered by user ID.
+\end{itemize}
+
+% --- app.js ---
+\section{frontend/js/app.js --- Complete JavaScript}
+This is the largest file in the project (444 lines). It handles all client-server communication via the Fetch API.
+
+\subsection{API Configuration and Helpers}
+
+\begin{lstlisting}[language=JavaScript]
+(() => {
+    const API = {
+        login:      '/feedbook/api/login',
+        register:   '/feedbook/api/register',
+        posts:      '/feedbook/api/posts',
+        createPost: '/feedbook/api/create_post',
+        updatePost: '/feedbook/api/update_post',
+        deletePost: '/feedbook/api/delete_post',
+        categories: '/feedbook/api/categories',
+        users:      '/feedbook/api/users',
+        search:     '/feedbook/api/search',
+        singlePost: '/feedbook/api/single_post',
+        me:         '/feedbook/api/me',
+    };
+
+    function showMessage(id, msg, type = 'info') {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.className = 'alert alert-' + type;
+        el.textContent = msg;
+        el.classList.remove('hidden');
+    }
+
+    function esc(t) {
+        if (!t) return '';
+        const d = document.createElement('div');
+        d.textContent = t;
+        return d.innerHTML;
+    }
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 1}: The entire application is wrapped in an \textbf{Immediately Invoked Function Expression (IIFE)} \texttt{(() => \{...\})()} to avoid polluting the global scope.
+    \item \textbf{Lines 2--14}: A centralized \texttt{API} object maps logical names to URL paths. This makes it easy to change endpoints in one place.
+    \item \textbf{\texttt{showMessage()}}: Updates an alert element to display success/error messages.
+    \item \textbf{\texttt{esc()}}: XSS protection function. By setting \texttt{textContent} and reading \texttt{innerHTML}, the browser automatically escapes any HTML entities (e.g., \texttt{<script>} becomes \texttt{\&lt;script\&gt;}).
+\end{itemize}
+
+\subsection{Toast Notification System}
+
+\begin{lstlisting}[language=JavaScript]
+    window.toast = function(msg, type = 'info') {
+        const c = document
+            .getElementById('toastContainer');
+        if (!c) return;
+        const t = document.createElement('div');
+        t.className = 'toast toast-' + type;
+        t.textContent = msg;
+        c.appendChild(t);
+        setTimeout(() => {
+            t.classList.add('fade-out');
+            setTimeout(() => t.remove(), 300);
+        }, 3500);
+    };
+\end{lstlisting}
+
+\textbf{Explanation:} Creates a toast notification element, adds it to the container, and automatically removes it after 3.5 seconds with a fade-out animation. The function is attached to \texttt{window} so it can be called from inline event handlers.
+
+\subsection{Login Handler}
+
+\begin{lstlisting}[language=JavaScript]
+    async function handleLogin(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector(
+            'button[type="submit"]');
+        const email = e.target.querySelector(
+            '[name="email"]').value.trim();
+        const password = e.target.querySelector(
+            '[name="password"]').value;
+
+        btn.disabled = true;
+        btn.textContent = 'Signing in...';
+
+        try {
+            const r = await fetch(API.login, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({email, password})
+            });
+            const d = await r.json();
+            if (d.success) {
+                showMessage('loginMessage',
+                    'Success! Redirecting...', 'success');
+                setTimeout(() =>
+                    location.href = '/feedbook/dashboard',
+                    800);
+            } else {
+                showMessage('loginMessage',
+                    d.message, 'danger');
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        } catch(err) {
+            showMessage('loginMessage',
+                'Network error', 'danger');
+        }
+    }
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 1}: \texttt{async function} enables the use of \texttt{await} for asynchronous fetch calls.
+    \item \textbf{Line 2}: \texttt{e.preventDefault()} stops the form from doing a traditional page-reload submission.
+    \item \textbf{Lines 10--11}: Disables the button and shows loading text to prevent double-submission.
+    \item \textbf{Lines 14--20}: Uses the Fetch API to send a POST request with JSON body. The \texttt{await} keyword pauses execution until the server responds.
+    \item \textbf{Lines 22--27}: On success, shows a green message and redirects to the dashboard after 800ms.
+    \item \textbf{Lines 34--36}: Catches network errors (e.g., server offline) and displays an error message.
+\end{itemize}
+
+\subsection{Post Creation with Image Upload}
+
+\begin{lstlisting}[language=JavaScript]
+    async function handleCreatePost(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+
+        if (!formData.get('title')?.trim()
+            || !formData.get('content')?.trim()) {
+            showMessage('postMessage',
+                'Title and content are required',
+                'danger');
+            return;
+        }
+
+        try {
+            const r = await fetch(API.createPost, {
+                method: 'POST',
+                body: formData
+            });
+            const d = await r.json();
+            if (d.success) {
+                toast('Post published!', 'success');
+                setTimeout(() =>
+                    location.href='/feedbook/dashboard',
+                    800);
+            } else {
+                showMessage('postMessage',
+                    d.message, 'danger');
+            }
+        } catch(err) {
+            showMessage('postMessage',
+                'Network error', 'danger');
+        }
+    }
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 4}: Uses \texttt{FormData} instead of \texttt{JSON.stringify()} because the form includes a file upload. \texttt{FormData} automatically encodes the data as \texttt{multipart/form-data}, which is required for \texttt{\$\_FILES} to work on the PHP side.
+    \item \textbf{Lines 6--7}: The optional chaining operator (\texttt{?.}) safely accesses \texttt{trim()} even if \texttt{get()} returns null.
+    \item \textbf{Lines 15--18}: Note that no \texttt{Content-Type} header is set manually. When using \texttt{FormData}, the browser automatically sets the correct \texttt{multipart/form-data} header with the boundary parameter.
+\end{itemize}
+
+\subsection{Search Functionality}
+
+\begin{lstlisting}[language=JavaScript]
+    window.handleSearch = async function(e) {
+        e.preventDefault();
+        const q = document.getElementById(
+            'searchInput').value.trim();
+        if (!q) return;
+        const overlay = document.getElementById(
+            'searchResults');
+        if (!overlay) return;
+        overlay.classList.remove('hidden');
+        overlay.innerHTML = '<div class=
+            "search-results-inner"><div class=
+            "loading-spinner">Searching...</div></div>';
+
+        try {
+            const r = await fetch(API.search
+                + '?q=' + encodeURIComponent(q));
+            const d = await r.json();
+            const posts = d.posts || [];
+            const inner = overlay.querySelector(
+                '.search-results-inner') || overlay;
+            if (!posts.length) {
+                inner.innerHTML = '<h3>No results for "'
+                    + esc(q) + '"</h3>';
+                return;
+            }
+            inner.innerHTML = '<h3>' + posts.length
+                + ' results</h3>'
+                + posts.map(p =>
+                    '<div class="search-result-item">'
+                    + '<h3><a href="/feedbook/post/'
+                    + p.id + '">' + esc(p.title)
+                    + '</a></h3>'
+                    + '<p>' + esc(p.content
+                        .substring(0, 100))
+                    + '...</p></div>').join('');
+        } catch(err) {
+            overlay.innerHTML = '<h3>Search failed</h3>';
+        }
+    };
+\end{lstlisting}
+
+\textbf{Explanation:}
+\begin{itemize}
+    \item \textbf{Line 15}: The search query is sent as a URL parameter with \texttt{encodeURIComponent()} to safely encode special characters.
+    \item \textbf{Line 9}: Shows the search overlay by removing the \texttt{hidden} class.
+    \item \textbf{Lines 28--35}: Uses \texttt{Array.map()} to transform search results into HTML strings, then \texttt{join('')} to concatenate them. Every user-generated value passes through \texttt{esc()} for XSS protection.
+\end{itemize}
+
+\subsection{Delete Post with Confirmation}
+
+\begin{lstlisting}[language=JavaScript]
+    window.deletePost = async function(postId) {
+        if (!confirm(
+            'Are you sure you want to delete?'))
+            return;
+        try {
+            const r = await fetch(API.deletePost, {
+                method: 'POST',
+                headers: {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({id: postId})
+            });
+            const d = await r.json();
+            if (d.success) {
+                toast('Post deleted', 'success');
+                loadDashboardPosts();
+            } else {
+                toast(d.message, 'error');
+            }
+        } catch(err) {
+            toast('Network error', 'error');
+        }
+    };
+\end{lstlisting}
+
+\textbf{Explanation:} Uses the browser's built-in \texttt{confirm()} dialog as a safety measure before deletion. The \texttt{window.deletePost} assignment makes the function callable from inline \texttt{onclick} handlers in dynamically generated HTML.
+
+\subsection{Initialization}
+The \texttt{DOMContentLoaded} event listener determines which page the user is on and attaches the appropriate event handlers:
+
+\begin{lstlisting}[language=JavaScript]
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm =
+            document.getElementById('loginForm');
+        if (loginForm)
+            loginForm.addEventListener(
+                'submit', handleLogin);
+
+        const homePosts =
+            document.getElementById('homePosts');
+        if (homePosts) {
+            loadHomePosts();
+            loadCategoryFilter();
+        }
+
+        const dashPosts =
+            document.getElementById('posts-container');
+        if (dashPosts)
+            loadDashboardPosts();
+
+        // ... similar checks for other pages
+    });
+\end{lstlisting}
+
+\textbf{Explanation:} Instead of having separate JavaScript files for each page, the application uses \textbf{feature detection} --- checking for the existence of specific DOM elements to determine which page is loaded and which handlers to attach. This keeps all JavaScript in a single file while avoiding errors on pages that don't have certain elements.
+
+
+% ============================================================
+% CHAPTER 5: HOW TO RUN
+% ============================================================
+\chapter{Setup and Running}
+
+\section{Prerequisites}
+\begin{itemize}
+    \item XAMPP installed with Apache and MySQL running
+    \item The project files located at \texttt{C:/xampp/htdocs/feedbook/}
+\end{itemize}
+
+\section{Setup Steps}
+\begin{enumerate}
+    \item Start Apache and MySQL from the XAMPP Control Panel.
+    \item Open a browser and navigate to: \texttt{http://localhost:8080/feedbook/setup.php}
+    \item The setup script will automatically:
+    \begin{itemize}
+        \item Create the \texttt{feedbook} database
+        \item Create all four tables (\texttt{users}, \texttt{categories}, \texttt{posts}, \texttt{comments})
+        \item Seed 5 default categories (Technology, Travel, Food, Lifestyle, Business)
+        \item Create an admin user: \texttt{admin@feedbook.com} / \texttt{admin123}
+    \end{itemize}
+    \item Navigate to \texttt{http://localhost:8080/feedbook/} to start using the application.
+\end{enumerate}
+
+\section{Default Admin Credentials}
+\begin{table}[h]
+\centering
+\begin{tabular}{l l}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+Email & admin@feedbook.com \\
+Password & admin123 \\
+Role & Admin \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ============================================================
+% CHAPTER 6: CONCLUSION
+% ============================================================
+\chapter{Conclusion}
+
+FeedBook demonstrates a complete full-stack web application built with PHP, MySQL, and vanilla JavaScript. The project follows the MVC architecture pattern, implements industry-standard security practices (bcrypt hashing, prepared statements, XSS protection), and features a modern, responsive UI.
+
+\section{Work Distribution Summary}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{l l l l}
+\toprule
+\textbf{Developer} & \textbf{Commits} & \textbf{Files} & \textbf{Work} \\
+\midrule
+S M Rahman Momin & 7 & 17 & Foundation, Models, CSS \\
+Sheikh Sadi & 7 & 17 & Controllers, APIs \\
+Abrar Hasan Chowdhury & 7 & 13 & Pages, Components, JS \\
+\midrule
+\textbf{Total} & \textbf{21} & \textbf{47} & \\
+\bottomrule
+\end{tabular}
+\caption{Work distribution across three developers}
+\end{table}
+
+\section{Repository}
+\begin{itemize}
+    \item \textbf{GitHub}: \url{https://github.com/smrahmanmomin/FeedBook}
+    \item \textbf{Development Period}: March 2 -- April 20, 2026
+    \item \textbf{Contributors}: 3
+\end{itemize}
+
+\end{document}

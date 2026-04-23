@@ -1,21 +1,23 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+require_once __DIR__ . '/backend/config/config.php';
 
-$host = 'localhost'; $user = 'root'; $pass = ''; $db_name = 'feedbook';
+$scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
+$basePath = ($scriptDir === '/' || $scriptDir === '.') ? '' : rtrim($scriptDir, '/');
+
+$host = DB_HOST;
+$user = DB_USER;
+$pass = DB_PASS;
+$db_name = DB_NAME;
 
 echo "<html><head><title>FeedBook Setup</title><style>body{font-family:'Segoe UI',sans-serif;max-width:600px;margin:40px auto;padding:20px;background:#f8f9fa}h2{color:#1a1a2e}.ok{color:#10b981}.err{color:#ef4444}a{color:#6366f1;font-weight:600}</style></head><body>";
 echo "<h2>📖 FeedBook — Database Setup</h2>";
 
 try {
-    $conn = new PDO("mysql:host=$host", $user, $pass);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    $conn->exec("CREATE DATABASE IF NOT EXISTS `$db_name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    echo "<p class='ok'>✓ Database ready</p>";
-
     $conn = new PDO("mysql:host=$host;dbname=$db_name;charset=utf8mb4", $user, $pass);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "<p class='ok'>✓ Database connection ready ($db_name)</p>";
 
     $conn->exec("SET FOREIGN_KEY_CHECKS = 0");
     $conn->exec("DROP TABLE IF EXISTS comments, posts, categories, users");
@@ -66,7 +68,7 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     echo "<p class='ok'>✓ Comments table</p>";
 
-    $conn->exec("INSERT INTO categories (name) VALUES ('Technology'),('Travel'),('Food'),('Lifestyle'),('Business')");
+    $conn->exec("INSERT INTO categories (name) VALUES ('Technology'),('Travel'),('Food'),('Lifestyle'),('Business'),('Health & Wellness'),('Finance'),('Education'),('Productivity'),('Science'),('Programming'),('Startups'),('Design'),('Sports'),('Entertainment'),('Books'),('Personal Development')");
     echo "<p class='ok'>✓ Categories seeded</p>";
 
     $pw = password_hash('admin123', PASSWORD_BCRYPT);
@@ -75,7 +77,7 @@ try {
 
     echo "<hr><h3 class='ok'>✓ Setup Complete!</h3>";
     echo "<p><b>Admin:</b> admin@feedbook.com / admin123</p>";
-    echo "<p><a href='/feedbook/'>→ Open FeedBook</a></p>";
+    echo "<p><a href='" . $basePath . "/'>→ Open FeedBook</a></p>";
 } catch (PDOException $e) {
     echo "<p class='err'>Error: " . $e->getMessage() . "</p>";
 }

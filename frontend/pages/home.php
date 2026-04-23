@@ -1,4 +1,7 @@
-<?php $pageTitle = 'FeedBook — Share Your Stories'; ?>
+<?php
+$pageTitle = 'FeedBook — Share Your Stories';
+$basePath = defined('APP_BASE_PATH') ? APP_BASE_PATH : '';
+?>
 <?php include __DIR__ . '/../components/header.php'; ?>
 
 <!-- Hero -->
@@ -7,11 +10,11 @@
     <p>A modern platform for writers, thinkers, and creators to publish articles and connect with readers.</p>
     <?php if (!isset($_SESSION['user_id'])): ?>
         <div class="hero-actions">
-            <a href="/feedbook/register" class="btn btn-white btn-large">Get Started</a>
-            <a href="/feedbook/login" class="btn btn-ghost btn-large">Sign In</a>
+            <a href="<?= $basePath ?>/register" class="btn btn-white btn-large">Get Started</a>
+            <a href="<?= $basePath ?>/login" class="btn btn-ghost btn-large">Sign In</a>
         </div>
     <?php else: ?>
-        <a href="/feedbook/create-post" class="btn btn-white btn-large">Write a Post</a>
+        <a href="<?= $basePath ?>/create-post" class="btn btn-white btn-large">Write a Post</a>
     <?php endif; ?>
 </section>
 

@@ -1,5 +1,6 @@
 <?php
-if (!isset($_SESSION['user_id'])) { header('Location: /feedbook/login'); exit; }
+$basePath = defined('APP_BASE_PATH') ? APP_BASE_PATH : '';
+if (!isset($_SESSION['user_id'])) { header('Location: ' . $basePath . '/login'); exit; }
 $pageTitle = 'Dashboard — FeedBook';
 $currentPage = 'dashboard';
 ?>
@@ -10,7 +11,7 @@ $currentPage = 'dashboard';
     <div class="dashboard-main">
         <div class="page-header">
             <h1>Dashboard</h1>
-            <a href="/feedbook/create-post" class="btn btn-primary">+ New Post</a>
+            <a href="<?= $basePath ?>/create-post" class="btn btn-primary">+ New Post</a>
         </div>
         <p class="welcome-text">Welcome back, <strong><?= htmlspecialchars($_SESSION['name'] ?? '') ?></strong>! 👋</p>
         <div id="dashboardMessage" class="alert hidden"></div>

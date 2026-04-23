@@ -8,8 +8,15 @@ class CategoryController {
 
     public static function create($name) {
         try {
-            if (empty($name)) return ['success' => false, 'message' => 'Name is required'];
-            $id = (new CategoryModel())->create($name);
+            $name = trim($name);
+            if ($name === '') return ['success' => false, 'message' => 'Name is required'];
+
+            $model = new CategoryModel();
+            if ($model->get_by_name($name)) {
+                return ['success' => false, 'message' => 'Category already exists'];
+            }
+
+            $id = $model->create($name);
             return ['success' => true, 'id' => $id, 'message' => 'Category created!'];
         } catch (Exception $e) {
             return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
@@ -17,7 +24,13 @@ class CategoryController {
     }
 
     public static function delete($id) {
-        try { (new CategoryModel())->delete($id); return ['success' => true]; } catch (Exception $e) { return ['success' => false]; }
+        try {
+            if ($id <= 0) return ['success' => false, 'message' => 'Invalid category'];
+            (new CategoryModel())->delete($id);
+            return ['success' => true, 'message' => 'Category deleted'];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => 'Could not delete category'];
+        }
     }
 }
 ?>

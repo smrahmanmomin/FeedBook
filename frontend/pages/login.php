@@ -1,5 +1,6 @@
 <?php
-if (isset($_SESSION['user_id'])) { header('Location: /feedbook/dashboard'); exit; }
+$basePath = defined('APP_BASE_PATH') ? APP_BASE_PATH : '';
+if (isset($_SESSION['user_id'])) { header('Location: ' . $basePath . '/dashboard'); exit; }
 $pageTitle = 'Login — FeedBook';
 ?>
 <?php include __DIR__ . '/../components/header.php'; ?>
@@ -19,7 +20,7 @@ $pageTitle = 'Login — FeedBook';
         </div>
         <button type="submit" class="btn btn-primary btn-block">Sign In</button>
     </form>
-    <p>Don't have an account? <a href="/feedbook/register">Register here</a></p>
+    <p>Don't have an account? <a href="<?= $basePath ?>/register">Register here</a></p>
 </div>
 
 <?php include __DIR__ . '/../components/footer.php'; ?>

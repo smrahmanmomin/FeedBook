@@ -20,6 +20,12 @@ class CategoryModel {
         return $stmt->fetch();
     }
 
+    public function get_by_name($name) {
+        $stmt = $this->db->prepare("SELECT * FROM categories WHERE LOWER(name) = LOWER(?) LIMIT 1");
+        $stmt->execute([$name]);
+        return $stmt->fetch();
+    }
+
     public function create($name) {
         $stmt = $this->db->prepare("INSERT INTO categories (name) VALUES (?)");
         $stmt->execute([$name]);
